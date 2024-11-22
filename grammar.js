@@ -12,10 +12,14 @@ module.exports = grammar({
 
   rules: {
     // TODO: add the actual grammar rules
-    source_file: ($) => $.meta_preprocessor_dylan,
+    source_file: ($) =>
+      choice($.meta_preprocessor_dylan, repeat($.function_definition)),
     comment_block_dylan: (_) => token(seq("///", /.*/)),
     line_comment: (_) => token(seq("//", /.*/)),
 
+    /**
+     * preprocessor
+     */
     meta_preprocessor_dylan: ($) =>
       seq(
         $.module,
@@ -40,8 +44,27 @@ module.exports = grammar({
     library: ($) => seq("library", $.string_literal),
 
     /**
+     * function definition
+     */
+
+    function_definition: ($) =>
+      seq(
+        "define",
+        optional($.modifier),
+        $.function_word,
+        $.identifier,
+        "(",
+        ")",
+        "=>",
+        "(",
+        ")",
+      ),
+
+    /**
      * Lexical grammar
      */
+    identifier: (_) =>
+      seq(/[_0-9\p{L}]/u, repeat(/[@_0-9\p{L}]/u), optional(choice("?", "!"))),
     literal: ($) =>
       choice(
         $.number,
@@ -53,12 +76,11 @@ module.exports = grammar({
         seq("#(", repeat(seq($.constant, optional(","))), ")"),
         seq("#[", repeat(seq($.constant, optional(","))), "]"),
       ),
-    string_literal: (_) => /[a-zA-Z \.,0-9]+/,
+    string_literal: (_) => /[a-zA-Z \.,0-9<>@]+/,
     number: (_) => /\d+/,
     character_literal: (_) => /[a-z\-$\*]/,
     symbol: (_) => "_", // TODO was ist das?
     constant: ($) => choice($.literal, $.symbol),
-    function_word: (_) => "(none)",
     hashtag_word: (_) =>
       choice("#t", "#f", "#next", "#rest", "#key", "#all-keys", "#include"),
     begin_word: (_) =>
@@ -74,6 +96,22 @@ module.exports = grammar({
         "until",
         "while",
       ),
+    modifier: (_) =>
+      choice(
+        "sealed",
+        "open",
+        "sideways",
+        "dynamic",
+        "compiler-sideways",
+        "compiler-open",
+        "default-inline",
+        "inline-only",
+        "inline",
+        "may-inline",
+        "not-inline",
+      ),
+    function_word: (_) =>
+      seq(optional("domain"), choice("method", "function", "generic")),
   },
 });
 /**

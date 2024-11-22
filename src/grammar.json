@@ -2,8 +2,20 @@
   "name": "dylan",
   "rules": {
     "source_file": {
-      "type": "SYMBOL",
-      "name": "meta_preprocessor_dylan"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "meta_preprocessor_dylan"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "function_definition"
+          }
+        }
+      ]
     },
     "comment_block_dylan": {
       "type": "TOKEN",
@@ -248,6 +260,94 @@
         }
       ]
     },
+    "function_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "define"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "modifier"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "function_word"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        },
+        {
+          "type": "STRING",
+          "value": "=>"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "identifier": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[_0-9\\p{L}]",
+          "flags": "u"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "PATTERN",
+            "value": "[@_0-9\\p{L}]",
+            "flags": "u"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "?"
+                },
+                {
+                  "type": "STRING",
+                  "value": "!"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
     "literal": {
       "type": "CHOICE",
       "members": [
@@ -374,7 +474,7 @@
     },
     "string_literal": {
       "type": "PATTERN",
-      "value": "[a-zA-Z \\.,0-9]+"
+      "value": "[a-zA-Z \\.,0-9<>@]+"
     },
     "number": {
       "type": "PATTERN",
@@ -400,10 +500,6 @@
           "name": "symbol"
         }
       ]
-    },
-    "function_word": {
-      "type": "STRING",
-      "value": "(none)"
     },
     "hashtag_word": {
       "type": "CHOICE",
@@ -480,6 +576,89 @@
         {
           "type": "STRING",
           "value": "while"
+        }
+      ]
+    },
+    "modifier": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "sealed"
+        },
+        {
+          "type": "STRING",
+          "value": "open"
+        },
+        {
+          "type": "STRING",
+          "value": "sideways"
+        },
+        {
+          "type": "STRING",
+          "value": "dynamic"
+        },
+        {
+          "type": "STRING",
+          "value": "compiler-sideways"
+        },
+        {
+          "type": "STRING",
+          "value": "compiler-open"
+        },
+        {
+          "type": "STRING",
+          "value": "default-inline"
+        },
+        {
+          "type": "STRING",
+          "value": "inline-only"
+        },
+        {
+          "type": "STRING",
+          "value": "inline"
+        },
+        {
+          "type": "STRING",
+          "value": "may-inline"
+        },
+        {
+          "type": "STRING",
+          "value": "not-inline"
+        }
+      ]
+    },
+    "function_word": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "domain"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "method"
+            },
+            {
+              "type": "STRING",
+              "value": "function"
+            },
+            {
+              "type": "STRING",
+              "value": "generic"
+            }
+          ]
         }
       ]
     }

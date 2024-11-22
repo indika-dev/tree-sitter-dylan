@@ -1,5 +1,5 @@
 ==================
-Metaprocessor definition
+Metaprocessor full definition
 ==================
 
 module TestModul
@@ -30,4 +30,24 @@ library testlib
     (executable
       (string_literal))
     (library
+      (string_literal))))
+
+
+==================
+Metaprocessor part definition
+==================
+
+module TestModul
+synopsis just something for testing
+author Stefan Maassen
+
+---
+
+(source_file
+  (meta_preprocessor_dylan
+    (module
+      (string_literal))
+    (synopsis
+      (string_literal))
+    (author
       (string_literal))))
