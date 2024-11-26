@@ -10,4 +10,5 @@ define sealed function iff() => ()
   (function_definition
     (modifier)
     (function_word)
-    (identifier)))
+    (identifier)
+      (parameters)))

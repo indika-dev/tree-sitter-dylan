@@ -1,5 +1,55 @@
 [
   {
+    "type": "array_type",
+    "named": true,
+    "fields": {
+      "size": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "pointer",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "custom_number_type",
+          "named": true
+        },
+        {
+          "type": "error_type",
+          "named": true
+        },
+        {
+          "type": "optional_type",
+          "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
+        },
+        {
+          "type": "type_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "author",
     "named": true,
     "fields": {},
@@ -53,6 +103,72 @@
     }
   },
   {
+    "type": "error_type",
+    "named": true,
+    "fields": {
+      "err": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "array_type",
+            "named": true
+          },
+          {
+            "type": "custom_number_type",
+            "named": true
+          },
+          {
+            "type": "error_type",
+            "named": true
+          },
+          {
+            "type": "optional_type",
+            "named": true
+          },
+          {
+            "type": "primitive_type",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "ok": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "array_type",
+            "named": true
+          },
+          {
+            "type": "custom_number_type",
+            "named": true
+          },
+          {
+            "type": "error_type",
+            "named": true
+          },
+          {
+            "type": "optional_type",
+            "named": true
+          },
+          {
+            "type": "primitive_type",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "executable",
     "named": true,
     "fields": {},
@@ -85,17 +201,34 @@
   {
     "type": "function_definition",
     "named": true,
-    "fields": {},
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameters",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
       "types": [
         {
           "type": "function_word",
-          "named": true
-        },
-        {
-          "type": "identifier",
           "named": true
         },
         {
@@ -221,6 +354,111 @@
     }
   },
   {
+    "type": "optional_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "array_type",
+          "named": true
+        },
+        {
+          "type": "custom_number_type",
+          "named": true
+        },
+        {
+          "type": "error_type",
+          "named": true
+        },
+        {
+          "type": "optional_type",
+          "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
+        },
+        {
+          "type": "type_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameter",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "array_type",
+            "named": true
+          },
+          {
+            "type": "custom_number_type",
+            "named": true
+          },
+          {
+            "type": "error_type",
+            "named": true
+          },
+          {
+            "type": "inference_type",
+            "named": true
+          },
+          {
+            "type": "optional_type",
+            "named": true
+          },
+          {
+            "type": "primitive_type",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "primitive_type",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "source_file",
     "named": true,
     "fields": {},
@@ -253,6 +491,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "type_identifier",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "version",
@@ -326,6 +569,10 @@
     "named": false
   },
   {
+    "type": "::",
+    "named": false
+  },
+  {
     "type": "=>",
     "named": false
   },
@@ -334,7 +581,15 @@
     "named": false
   },
   {
+    "type": "[",
+    "named": false
+  },
+  {
     "type": "]",
+    "named": false
+  },
+  {
+    "type": "anyerror",
     "named": false
   },
   {
@@ -347,6 +602,50 @@
   },
   {
     "type": "block",
+    "named": false
+  },
+  {
+    "type": "bool",
+    "named": false
+  },
+  {
+    "type": "c_int",
+    "named": false
+  },
+  {
+    "type": "c_long",
+    "named": false
+  },
+  {
+    "type": "c_longdouble",
+    "named": false
+  },
+  {
+    "type": "c_longlong",
+    "named": false
+  },
+  {
+    "type": "c_short",
+    "named": false
+  },
+  {
+    "type": "c_uint",
+    "named": false
+  },
+  {
+    "type": "c_ulong",
+    "named": false
+  },
+  {
+    "type": "c_ulonglong",
+    "named": false
+  },
+  {
+    "type": "c_ushort",
+    "named": false
+  },
+  {
+    "type": "c_void",
     "named": false
   },
   {
@@ -366,8 +665,20 @@
     "named": false
   },
   {
+    "type": "comptime_float",
+    "named": false
+  },
+  {
+    "type": "comptime_int",
+    "named": false
+  },
+  {
     "type": "copyright",
     "named": false
+  },
+  {
+    "type": "custom_number_type",
+    "named": true
   },
   {
     "type": "default-inline",
@@ -390,6 +701,22 @@
     "named": false
   },
   {
+    "type": "f128",
+    "named": false
+  },
+  {
+    "type": "f16",
+    "named": false
+  },
+  {
+    "type": "f32",
+    "named": false
+  },
+  {
+    "type": "f64",
+    "named": false
+  },
+  {
     "type": "files",
     "named": false
   },
@@ -406,8 +733,32 @@
     "named": false
   },
   {
+    "type": "i128",
+    "named": false
+  },
+  {
+    "type": "i16",
+    "named": false
+  },
+  {
+    "type": "i32",
+    "named": false
+  },
+  {
+    "type": "i64",
+    "named": false
+  },
+  {
+    "type": "i8",
+    "named": false
+  },
+  {
     "type": "if",
     "named": false
+  },
+  {
+    "type": "inference_type",
+    "named": true
   },
   {
     "type": "inline",
@@ -415,6 +766,14 @@
   },
   {
     "type": "inline-only",
+    "named": false
+  },
+  {
+    "type": "integer_literal",
+    "named": true
+  },
+  {
+    "type": "isize",
     "named": false
   },
   {
@@ -434,6 +793,10 @@
     "named": false
   },
   {
+    "type": "noreturn",
+    "named": false
+  },
+  {
     "type": "not-inline",
     "named": false
   },
@@ -444,6 +807,10 @@
   {
     "type": "open",
     "named": false
+  },
+  {
+    "type": "pointer",
+    "named": true
   },
   {
     "type": "sealed",
@@ -470,6 +837,30 @@
     "named": false
   },
   {
+    "type": "type",
+    "named": false
+  },
+  {
+    "type": "u128",
+    "named": false
+  },
+  {
+    "type": "u16",
+    "named": false
+  },
+  {
+    "type": "u32",
+    "named": false
+  },
+  {
+    "type": "u64",
+    "named": false
+  },
+  {
+    "type": "u8",
+    "named": false
+  },
+  {
     "type": "unless",
     "named": false
   },
@@ -478,7 +869,15 @@
     "named": false
   },
   {
+    "type": "usize",
+    "named": false
+  },
+  {
     "type": "version",
+    "named": false
+  },
+  {
+    "type": "void",
     "named": false
   },
   {

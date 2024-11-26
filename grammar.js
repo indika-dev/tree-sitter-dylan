@@ -7,8 +7,70 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const PREC = {
+  call: 14,
+  errorset: 13,
+  unary: 12,
+  postfix: 11,
+  multiplicative: 10,
+  additive: 9,
+  shift: 8,
+  bitand: 7,
+  bitxor: 6,
+  bitor: 5,
+  comparative: 4,
+  and: 3,
+  or: 2,
+  special: 1,
+  assign: 0,
+  if: -1,
+  optional: -2,
+  array: -3,
+};
+
+const numeric_types = [
+  "i8",
+  "u8",
+  "i16",
+  "u16",
+  "i32",
+  "u32",
+  "i64",
+  "u64",
+  "i128",
+  "u128",
+  "isize",
+  "usize",
+  "c_short",
+  "c_ushort",
+  "c_int",
+  "c_uint",
+  "c_long",
+  "c_ulong",
+  "c_longlong",
+  "c_ulonglong",
+  "c_longdouble",
+  "c_void",
+  "f16",
+  "f32",
+  "f64",
+  "f128",
+  "comptime_int",
+  "comptime_float",
+];
+
+const primitive_types = numeric_types.concat([
+  "bool",
+  "void",
+  "noreturn",
+  "type",
+  "anyerror",
+]);
+
 module.exports = grammar({
   name: "dylan",
+
+  conflicts: ($) => [[$.identifier]],
 
   rules: {
     // TODO: add the actual grammar rules
@@ -52,12 +114,27 @@ module.exports = grammar({
         "define",
         optional($.modifier),
         $.function_word,
-        $.identifier,
-        "(",
-        ")",
+        field("name", $.identifier),
+        field("parameters", $.parameters),
         "=>",
         "(",
         ")",
+      ),
+
+    parameters: ($) => seq("(", sepBy(",", $.parameter), ")"),
+
+    parameter: ($) =>
+      seq(
+        optional(choice("#key", "#rest")),
+        field("name", $.identifier),
+        "::",
+        field(
+          "type",
+          choice(
+            $._type,
+            alias("anytype", $.inference_type) /*, $._expression*/, // TODO check if _expression from zig parser is needed here
+          ),
+        ),
       ),
 
     /**
@@ -112,8 +189,80 @@ module.exports = grammar({
       ),
     function_word: (_) =>
       seq(optional("domain"), choice("method", "function", "generic")),
+
+    /**
+     * taken from tree-sitter parser for Zig
+     */
+
+    _type: ($) =>
+      prec(
+        -1,
+        choice(
+          $.primitive_type,
+          $.optional_type,
+          $.error_type,
+          $.array_type,
+          $.custom_number_type,
+          alias($.identifier, $.type_identifier),
+        ),
+      ),
+
+    primitive_type: (_) => choice(...primitive_types),
+
+    custom_number_type: (_) => /[iu]\d+/,
+
+    // Having the err field optional cause a bunch of conflicts
+    // so when `!<type>` happens, it will show as unary expression
+    error_type: ($) =>
+      prec.left(seq(field("err", $._type), "!", field("ok", $._type))),
+
+    optional_type: ($) => prec(PREC.optional, seq("?", $._type)),
+
+    array_type: ($) =>
+      prec(
+        PREC.array,
+        seq(
+          repeat(
+            seq(
+              "[",
+              field(
+                "size",
+                optional(
+                  choice(
+                    $.integer_literal,
+                    $.identifier,
+                    alias(seq("*", optional("c")), $.pointer),
+                  ),
+                ),
+              ),
+              "]",
+            ),
+          ),
+          // optional(repeat($.type_prefix)), // TODO types in arrays? -> might be tuples
+          // Cannot be another array type, since the sintax already cover
+          // muldimentional arrays
+          choice(
+            $.primitive_type,
+            $.optional_type,
+            $.error_type,
+            $.custom_number_type,
+            alias($.identifier, $.type_identifier),
+          ),
+        ),
+      ),
+
+    integer_literal: (_) =>
+      token(seq(choice(/[0-9]+/, /0x[0-9a-fA-F]+/, /0b[01]+/, /0o[0-7]+/))),
   },
 });
+
+function sepBy1(sep, rule) {
+  return seq(rule, repeat(seq(sep, rule)), optional(sep));
+}
+
+function sepBy(sep, rule) {
+  return optional(sepBy1(sep, rule));
+}
 /**
 {
   "patterns": [
